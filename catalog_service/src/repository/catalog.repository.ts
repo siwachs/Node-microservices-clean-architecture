@@ -1,0 +1,25 @@
+import { ICatalogRepository } from "../interface/catalogRepository.interface";
+
+import { Product } from "../models/product.model";
+
+export class CatalogRepository implements ICatalogRepository {
+  create(data: Product): Promise<Product> {
+    throw new Error("Method not implemented.");
+  }
+
+  update(data: Product): Promise<Product> {
+    throw new Error("Method not implemented.");
+  }
+
+  delete(id: string): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
+
+  find(): Promise<Product[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  findOne(id: string): Promise<Product> {
+    throw new Error("Method not implemented.");
+  }
+}
