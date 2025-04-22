@@ -2,3 +2,6 @@
 **/coverage
 **/.env
 **/database.json
+**/dist
+**/db-data
+**/generated
