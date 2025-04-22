@@ -53,3 +53,12 @@ Custom reporting systems, analytics engines, high-performance financial systems,
 
 ⚖️ Best Practice: Use Both
 Use an ORM for 80% of your standard operations, and fall back to raw SQL for complex or performance-critical use cases.
+
+# Prisma
+
+After init and creating a model to create migration file use command
+
+```
+npx prisma migrate dev --name init
+
+```
