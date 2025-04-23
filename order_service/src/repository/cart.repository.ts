@@ -1,6 +1,13 @@
+import { DB } from "../db/db.connection";
+import { carts } from "../db/schema";
+
 import { CartRepositoryType } from "../types/repository.type";
 
 const createCart = async (input: any): Promise<{}> => {
+  const result = await DB.insert(carts)
+    .values({ customerId: 1 })
+    .returning({ cartId: carts.id });
+
   return Promise.resolve({});
 };
 
