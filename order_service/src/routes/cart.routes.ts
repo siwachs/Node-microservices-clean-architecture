@@ -9,6 +9,16 @@ import { CartRequestInput, CartRequestSchema } from "../dto/cartRequest.dto";
 const router = express.Router();
 const repo = repository.CartRepository;
 
+const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const isValidUser = true;
+  if (!isValidUser)
+    return res.status(401).json({ error: "authorization error" });
+
+  next();
+};
+
+router.use(authMiddleware);
+
 router.post(
   "/cart",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -32,8 +42,8 @@ router.post(
 
 router.get("/cart", async (req: Request, res: Response) => {});
 
-router.patch("/cart", async (req: Request, res: Response) => {});
+router.patch("/cart/:lineItemId", async (req: Request, res: Response) => {});
 
-router.delete("/cart", async (req: Request, res: Response) => {});
+router.delete("/cart/:lineItemId", async (req: Request, res: Response) => {});
 
 export default router;
