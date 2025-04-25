@@ -13,7 +13,7 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: catalog_service
     volumes:
-      - ./db-data/catalog:/var/lib/postgresql/data
+      - ./db-data/catalog_db_service:/var/lib/postgresql/data
 
   order_db_service:
     image: "postgres:14.0"
@@ -27,4 +27,18 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: order_service
     volumes:
-      - ./db-data/order:/var/lib/postgresql/data
+      - ./db-data/order_db_service:/var/lib/postgresql/data
+
+  user_db_service:
+    image: "postgres:14.0"
+    ports:
+      - "5442:5432"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: user_service
+    volumes:
+      - ./db-data/user_db_service/:/var/lib/postgresql/data

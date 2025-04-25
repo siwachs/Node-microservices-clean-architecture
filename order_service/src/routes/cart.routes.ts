@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { ValidateRequest } from "../utils/validator";
+import { RequestAuthorizer } from "./middleware";
 
 import * as service from "../services/cart.service";
 import * as repository from "../repository/cart.repository";
@@ -9,18 +10,9 @@ import { CartRequestInput, CartRequestSchema } from "../dto/cartRequest.dto";
 const router = express.Router();
 const repo = repository.CartRepository;
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const isValidUser = true;
-  if (!isValidUser)
-    return res.status(401).json({ error: "authorization error" });
-
-  next();
-};
-
-router.use(authMiddleware);
-
 router.post(
   "/cart",
+  RequestAuthorizer,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const error = ValidateRequest<CartRequestInput>(
@@ -29,8 +21,13 @@ router.post(
       );
       if (error) return res.json(404).json({ error });
 
+      const user = req.user;
+      if (!user) return next(new Error("User not found"));
+
+      const input: CartRequestInput = req.body;
+
       const response = await service.CreateCart(
-        req.body as CartRequestInput,
+        { ...input, customerId: user.id },
         repo
       );
       return res.status(201).json(response);

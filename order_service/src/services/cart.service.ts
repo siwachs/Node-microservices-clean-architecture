@@ -5,7 +5,7 @@ import { NotFoundError } from "../utils";
 import { GetProductDetails } from "../utils/broker";
 
 export const CreateCart = async (
-  input: CartRequestInput,
+  input: CartRequestInput & { customerId: number },
   repo: CartRepositoryType
 ) => {
   const product = await GetProductDetails(input.productId);
