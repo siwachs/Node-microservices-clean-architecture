@@ -1,29 +1,23 @@
 import express, { Request, Response, NextFunction } from "express";
-import { MessageBroker } from "../utils";
-import { OrderEvent } from "../types";
+
+import { RequestAuthorizer } from "./middleware";
+import * as service from "../services/order.service";
+import { OrderRepository } from "../repository/order.repository";
+import { CartRepository } from "../repository/cart.repository";
 
 const router = express.Router();
+const repo = OrderRepository;
+const cartRepo = CartRepository;
 
 router.post(
   "/order",
+  RequestAuthorizer,
   async (req: Request, res: Response, next: NextFunction) => {
-    // Create Order
+    const user = req.user;
+    if (!user) return next("User not found");
 
-    // Publish the message
-    await MessageBroker.publish({
-      topic: "OrderEvents",
-      headers: { token: req.headers.authoriztion },
-      event: OrderEvent.CREATE_ORDER,
-      message: {
-        orderId: 1,
-        items: [
-          { productId: 1, quantity: 1 },
-          { productId: 2, quantity: 1 },
-        ],
-      },
-    });
-
-    return res.json(200).json({ message: "Order Created" });
+    const response = await service.CreateOrder(user.id, repo, cartRepo);
+    return res.status(200).json(response);
   }
 );
 
