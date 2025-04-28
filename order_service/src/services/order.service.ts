@@ -1,7 +1,7 @@
 import { OrderLineItemType, OrderWithLineItems } from "../dto/orderRequest.dto";
 import { CartRepositoryType } from "../repository/cart.repository";
 import { OrderRepositoryType } from "../repository/order.repository";
-import { OrderStatus } from "../types";
+import { MessageType, OrderStatus } from "../types";
 
 export const CreateOrder = async (
   userId: number,
@@ -47,12 +47,37 @@ export const CreateOrder = async (
   return { message: "Order created successfully", orderNumber: orderNumber };
 };
 
-export const GetOrder = async (id: number) => {};
+export const UpdateOrder = async (
+  orderId: number,
+  status: OrderStatus,
+  repo: OrderRepositoryType
+) => {
+  await repo.updateOrder(orderId, status);
 
-export const EditOrder = async (input: any) => {
-  return {};
+  // fire a message to subscription service [catalog service] to update stock
+  if (status === OrderStatus.CANCELLED) {
+    // await repo.publishOrderEvent(order, "ORDER_CANCELLED");
+  }
+  return { message: "Order updated successfully" };
 };
 
-export const DeleteOrder = async (input: any) => {
-  return {};
+export const GetOrder = async (orderId: number, repo: OrderRepositoryType) => {
+  const order = repo.findOrder(orderId);
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  return order;
+};
+
+export const DeleteOrder = async (
+  orderId: number,
+  repo: OrderRepositoryType
+) => {
+  await repo.deleteOrder(orderId);
+  return true;
+};
+
+export const HandleSubscription = async (message: MessageType) => {
+  console.log("Message received by order Kafka consumer", message);
 };

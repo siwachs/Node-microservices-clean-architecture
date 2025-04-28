@@ -5,10 +5,13 @@ import { CatalogRepository } from "../repository/catalog.repository";
 
 import { RequestValidator } from "../utils/requestValidator";
 import { CreateProductRequest, UpdateProductRequest } from "../dto/product.dto";
+import { BrokerService } from "../services/broker.service";
 
 const router = express.Router();
 
 export const catalogService = new CatalogService(new CatalogRepository());
+const brokerService = new BrokerService(catalogService);
+brokerService.initlizeBroker();
 
 router.post(
   "/product",

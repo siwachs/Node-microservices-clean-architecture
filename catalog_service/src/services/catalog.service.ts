@@ -35,7 +35,9 @@ export class CatalogService {
     return product;
   }
 
-  deleteProduct(id: string) {
+  async deleteProduct(id: string) {
     return this._repository.delete(id);
   }
+
+  async handleBrokerMessage(data: any) {}
 }

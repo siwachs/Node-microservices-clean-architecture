@@ -1,11 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
-import { Consumer, Producer } from "kafkajs";
 
 import CartRoutes from "./routes/cart.routes";
 import OrderRoutes from "./routes/order.routes";
 import { httpLogger, HandleErrorWithLogger } from "./utils";
-import { MessageBroker } from "./utils/broker";
+import { InitializeBroker } from "./services/broker.service";
 
 export const ExpressApp = async () => {
   const app = express();
@@ -14,22 +13,7 @@ export const ExpressApp = async () => {
   app.use(express.json());
   app.use(httpLogger);
 
-  // Connect Producer and Consumer
-  const producer = await MessageBroker.connectProducer<Producer>();
-  producer.on("producer.connect", () => {
-    console.log("Producer connected");
-  });
-
-  const consumer = await MessageBroker.connectConsumer<Consumer>();
-  consumer.on("consumer.connect", () => {
-    console.log("Consumer connected");
-  });
-
-  // Subscribe to the topic or publish the message
-  await MessageBroker.subscribe((message) => {
-    console.log("Consumer received the message");
-    console.log("Message is", message);
-  }, "OrderEvents");
+  await InitializeBroker();
 
   app.use(CartRoutes);
 
