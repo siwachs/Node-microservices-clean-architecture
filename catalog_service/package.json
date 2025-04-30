@@ -12,6 +12,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^9.0.1",
     "@prisma/client": "6.6.0",
     "@types/node": "^22.14.1",
     "class-transformer": "^0.5.1",

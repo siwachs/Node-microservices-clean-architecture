@@ -1,4 +1,5 @@
 import { ICatalogRepository } from "../interface/catalogRepository.interface";
+import { AppEventListener } from "../utils/ElasticSearchListener";
 
 export class CatalogService {
   private _repository: ICatalogRepository;
@@ -11,6 +12,11 @@ export class CatalogService {
     const data = await this._repository.create(input);
     if (!data.id) throw new Error("Unable to create product");
 
+    AppEventListener.getInstance().notify({
+      event: "createProduct",
+      data,
+    });
+
     return data;
   }
 
@@ -18,7 +24,10 @@ export class CatalogService {
     const data = await this._repository.update(input);
     if (!data.id) throw new Error("Product does not exist");
 
-    // emit event to update record in Elastic Search...
+    AppEventListener.getInstance().notify({
+      event: "updateProduct",
+      data,
+    });
 
     return data;
   }
@@ -36,7 +45,15 @@ export class CatalogService {
   }
 
   async deleteProduct(id: string) {
-    return this._repository.delete(id);
+    const response = await this._repository.delete(id);
+    if (!response) throw new Error("Unable to delete product");
+
+    AppEventListener.getInstance().notify({
+      event: "deleteProduct",
+      data: { id },
+    });
+
+    return response;
   }
 
   async handleBrokerMessage(data: any) {}
